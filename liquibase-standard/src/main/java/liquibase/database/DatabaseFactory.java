@@ -3,6 +3,7 @@ package liquibase.database;
 import liquibase.Scope;
 import liquibase.SingletonObject;
 import liquibase.database.core.UnsupportedDatabase;
+import liquibase.database.core.XuGuDatabase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.UnexpectedLiquibaseException;
@@ -39,6 +40,8 @@ public class DatabaseFactory implements SingletonObject {
             for (Database database : Scope.getCurrentScope().getServiceLocator().findInstances(Database.class)) {
                 register(database);
             }
+            register(new XuGuDatabase());
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
