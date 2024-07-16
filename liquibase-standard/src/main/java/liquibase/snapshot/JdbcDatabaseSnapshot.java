@@ -1328,7 +1328,7 @@ public class JdbcDatabaseSnapshot extends DatabaseSnapshot {
                 private List<CachedRow> queryXuGu(CatalogAndSchema catalogAndSchema, String tableName) throws  SQLException {
                     StringBuilder sql = new StringBuilder();
                     sql.append("SELECT \n")
-                            .append("  '").append(catalogAndSchema.getCatalogName()).append("' AS TABLE_CAT, \n")
+                            .append("  '").append(catalogAndSchema.getCatalogName().toUpperCase()).append("' AS TABLE_CAT, \n")
                             .append("  s.schema_name AS TABLE_SCHEM, \n")
                             .append("  t.table_name AS TABLE_NAME, \n")
                             .append("  'TABLE' AS TABLE_TYPE, \n")
@@ -1343,8 +1343,10 @@ public class JdbcDatabaseSnapshot extends DatabaseSnapshot {
                             .append("  all_schemas s \n")
                             .append("WHERE \n")
                             .append("  t.schema_id = s.schema_id \n")
-                            .append("  AND t.table_name = '").append(table).append("' \n")
-                            .append("  AND s.schema_name IN('").append(catalogAndSchema.getSchemaName()).append("') \n")
+                            .append("  AND t.table_name = '").append(table.toUpperCase()).append("' \n")
+                            .append("  AND s.schema_name IN('").append(catalogAndSchema.getSchemaName().toUpperCase()).append("')" +
+                                    " " +
+                                    "\n")
                             .append("  AND t.temp_type = 0 \n")
                             .append("  AND t.IS_SYS = FALSE");
                             JdbcConnection connection = (JdbcConnection) database.getConnection();

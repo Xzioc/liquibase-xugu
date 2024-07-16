@@ -40,7 +40,6 @@ public class DatabaseFactory implements SingletonObject {
             for (Database database : Scope.getCurrentScope().getServiceLocator().findInstances(Database.class)) {
                 register(database);
             }
-            register(new XuGuDatabase());
 
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -18,3 +18,4 @@ liquibase.database.core.SQLiteDatabase
 liquibase.database.core.SybaseASADatabase
 liquibase.database.core.SybaseDatabase
 liquibase.database.core.UnsupportedDatabase
+liquibase.database.core.XuGuDatabase
