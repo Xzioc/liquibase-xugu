@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * @Date 2024/7/15 15:32
  */
 public class XuGuDatabase extends AbstractJdbcDatabase {
-    private static final String PRODUCT_NAME = "XuGu SQL Server";
+    public static final String PRODUCT_NAME = "XuGU";
     private static final Set<String> RESERVED_WORDS = createReservedWords();
 
     /** Pattern used to extract function precision like 3 in CURRENT_TIMESTAMP(3) */
@@ -78,13 +78,7 @@ public class XuGuDatabase extends AbstractJdbcDatabase {
 
     @Override
     public boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
-        // If it looks like a MySQL, swims like a MySQL and quacks like a MySQL,
-        // it may still not be a MySQL, but a MariaDB.
-        return (
-                (PRODUCT_NAME.equalsIgnoreCase(conn.getDatabaseProductName()))
-                        && (!conn.getDatabaseProductVersion().toLowerCase().contains("mariadb") &&
-                        !conn.getDatabaseProductVersion().toLowerCase().contains("clustrix"))
-        );
+        return PRODUCT_NAME.equalsIgnoreCase(conn.getDatabaseProductName());
     }
 
     @Override
