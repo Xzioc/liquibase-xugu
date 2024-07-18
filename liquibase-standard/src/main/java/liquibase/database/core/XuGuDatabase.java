@@ -129,34 +129,23 @@ public class XuGuDatabase extends AbstractJdbcDatabase {
 
     @Override
     protected String getAutoIncrementClause() {
-        return "INCREMENT";
+        return "IDENTITY(1,1)";
     }
 
-    @Override
-    protected boolean generateAutoIncrementStartWith(final BigInteger startWith) {
-        // startWith not supported here. StartWith has to be set as table option.
-        return false;
-    }
 
-    public String getTableOptionAutoIncrementStartWithClause(BigInteger startWith) {
-        String startWithClause = String.format(getAutoIncrementStartWithClause(), (startWith == null) ? defaultAutoIncrementStartWith : startWith);
-        return getAutoIncrementClause() + startWithClause;
-    }
 
-    @Override
-    protected boolean generateAutoIncrementBy(BigInteger incrementBy) {
-        // incrementBy not supported
-        return false;
-    }
-
-    @Override
-    protected String getAutoIncrementOpening() {
-        return "";
-    }
-
-    @Override
-    protected String getAutoIncrementClosing() {
-        return "";
+    public String getAutoIncrementClause(BigInteger startWith, BigInteger incrementBy, String generationType, Boolean defaultOnNull) {
+        String clause = getAutoIncrementClause();
+        boolean generateStartWith = generateAutoIncrementStartWith(startWith);
+        boolean generateIncrementBy = generateAutoIncrementBy(incrementBy);
+        if (generateStartWith || generateIncrementBy) {
+            return clause.replaceAll("\\(.*?\\)", "") + "(" +
+                    ((startWith == null) ? defaultAutoIncrementStartWith : startWith) +
+                    "," +
+                    ((incrementBy == null) ? defaultAutoIncrementBy : incrementBy) +
+                    ")";
+        }
+        return clause;
     }
 
     @Override
