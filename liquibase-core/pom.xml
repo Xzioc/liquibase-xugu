@@ -7,7 +7,9 @@
         <artifactId>liquibase</artifactId>
         <version>0-SNAPSHOT</version>
     </parent>
-    <artifactId>liquibase-core</artifactId>
+    <groupId>org.liquibase</groupId>
+    <artifactId>liquibase-core-xugu</artifactId>
+    <version>4.9.0</version>
     <packaging>jar</packaging>
 
     <!-- must use "Liquibase" as the name for the publicly released artifact -->
@@ -63,6 +65,13 @@
             <version>${commons-lang3.version}</version>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>xc-repo</id>
+            <url>http://mvn1.xugu.com/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <plugins>

@@ -1,6 +1,7 @@
 package liquibase.database.core;
 
 import liquibase.CatalogAndSchema;
+import liquibase.GlobalConfiguration;
 import liquibase.Scope;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
@@ -29,6 +30,8 @@ import java.util.regex.Pattern;
  * @Date 2024/7/15 15:32
  */
 public class XuGuDatabase extends AbstractJdbcDatabase {
+
+
     public static final String PRODUCT_NAME = "XuGU";
     private static final Set<String> RESERVED_WORDS = createReservedWords();
 
@@ -60,7 +63,14 @@ public class XuGuDatabase extends AbstractJdbcDatabase {
             return name;
         }
     }
-
+    @Override
+    public String getDefaultCatalogName() {//NOPMD
+        String defaultCatalogName = super.getDefaultCatalogName();
+        if (Boolean.TRUE.equals(GlobalConfiguration.PRESERVE_SCHEMA_CASE.getCurrentValue())) {
+            return defaultCatalogName;
+        }
+        return (defaultCatalogName == null) ? null : defaultCatalogName.toUpperCase(Locale.US);
+    }
     @Override
     protected String getDefaultDatabaseProductName() {
         return "XuGu SQL Server";
@@ -83,26 +93,9 @@ public class XuGuDatabase extends AbstractJdbcDatabase {
 
     @Override
     public String getDefaultDriver(String url) {
-        if (url != null && url.toLowerCase().startsWith("jdbc:xugu")) {
-            String cjDriverClassName = "com.xugu.cloudjdbc.Driver";
-            try {
-
-                //make sure we don't have an old jdbc driver that doesn't have this class
-                Class.forName(cjDriverClassName);
-                return cjDriverClassName;
-            } catch (ClassNotFoundException e) {
-                //
-                // Try to load the class again with the current thread classloader
-                //
-                ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                try {
-                    Class.forName(cjDriverClassName, true, cl);
-                    return cjDriverClassName;
-                } catch (ClassNotFoundException cnfe) {
-                    return "com.xugu.cloudjdbc.Driver";
-                }
-            }
-
+        //noinspection HardCodedStringLiteral
+        if (url.startsWith("jdbc:xugu")) {
+            return "com.xugu.cloudjdbc.Driver";
         }
         return null;
     }
@@ -153,6 +146,9 @@ public class XuGuDatabase extends AbstractJdbcDatabase {
         return "=%d";
     }
 
+    public String getDefaultSchemaName() {
+        return "SYSDBA";
+    }
     @Override
     public String getConcatSql(String... values) {
         StringBuilder returnString = new StringBuilder();

@@ -12,6 +12,7 @@
     <description>Liquibase CLI interface</description>
 
     <artifactId>liquibase-cli</artifactId>
+    <version>4.9.0</version>
 
     <properties>
         <sonar.coverage.jacoco.xmlReportPaths>../target/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
