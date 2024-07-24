@@ -83,8 +83,13 @@ public class DropPrimaryKeyGenerator extends AbstractSqlGenerator<DropPrimaryKey
             String escapedTableName = database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName());
             String escapedConstraintName = database.escapeConstraintName(statement.getConstraintName());
             sql = "ALTER TABLE " + escapedTableName + " DROP CONSTRAINT " + escapedConstraintName;
+        } else if (database instanceof XuGuDatabase) {
+            String escapedTableName = database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName());
+            String escapedConstraintName = database.escapeConstraintName(statement.getConstraintName());
+            sql = "ALTER TABLE " + escapedTableName + " DROP CONSTRAINT " + escapedConstraintName;
         } else {
-            sql = "ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) + " DROP PRIMARY KEY";
+            sql = "ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(),
+                    statement.getTableName()) + " DROP PRIMARY KEY";
         }
 
         return new Sql[] {
