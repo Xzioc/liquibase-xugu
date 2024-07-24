@@ -93,10 +93,15 @@ public class ModifyDataTypeGenerator extends AbstractSqlGenerator<ModifyDataType
     protected String getPreDataTypeString(Database database) {
         if ((database instanceof DerbyDatabase) || (database instanceof AbstractDb2Database)) {
             return " SET DATA TYPE ";
-        } else if ((database instanceof SybaseASADatabase) || (database instanceof SybaseDatabase) || (database
-            instanceof MSSQLDatabase) || (database instanceof MySQLDatabase) || (database instanceof HsqlDatabase) ||
-            (database instanceof H2Database) || (database instanceof OracleDatabase) || (database instanceof
-            InformixDatabase)) {
+        } else if ((database instanceof SybaseASADatabase)
+                || (database instanceof SybaseDatabase)
+                || (database instanceof MSSQLDatabase)
+                || (database instanceof MySQLDatabase)
+                || (database instanceof HsqlDatabase)
+                || (database instanceof H2Database)
+                || (database instanceof OracleDatabase)
+                || (database instanceof InformixDatabase)
+                || (database instanceof XuGuDatabase)) {
             return " ";
         } else {
             return " TYPE ";
