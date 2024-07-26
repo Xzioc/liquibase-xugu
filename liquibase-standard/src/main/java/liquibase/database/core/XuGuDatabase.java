@@ -146,9 +146,6 @@ public class XuGuDatabase extends AbstractJdbcDatabase {
         return "=%d";
     }
 
-    public String getDefaultSchemaName() {
-        return "SYSDBA";
-    }
     @Override
     public String getConcatSql(String... values) {
         StringBuilder returnString = new StringBuilder();
@@ -169,23 +166,7 @@ public class XuGuDatabase extends AbstractJdbcDatabase {
 
     @Override
     public boolean supports(Class<? extends DatabaseObject> object) {
-        if (Schema.class.isAssignableFrom(object)) {
-            return false;
-        }
-        if (Sequence.class.isAssignableFrom(object)) {
-            return false;
-        }
         return super.supports(object);
-    }
-
-    @Override
-    public boolean supportsSchemas() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsCatalogs() {
-        return true;
     }
 
     @Override

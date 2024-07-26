@@ -1,5 +1,6 @@
 package liquibase.database;
 
+
 import liquibase.CatalogAndSchema;
 import liquibase.GlobalConfiguration;
 import liquibase.Scope;
@@ -12,7 +13,6 @@ import liquibase.diff.compare.DatabaseObjectComparatorFactory;
 import liquibase.exception.*;
 import liquibase.executor.ExecutorService;
 import liquibase.lockservice.LockServiceFactory;
-import liquibase.snapshot.SnapshotControl;
 import liquibase.sql.Sql;
 import liquibase.sql.visitor.SqlVisitor;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
@@ -786,7 +786,7 @@ public abstract class AbstractJdbcDatabase implements Database {
         schema = schema.customize(this);
         if ("information_schema".equalsIgnoreCase(schema.getSchemaName())) {
             return true;
-        } else return getSystemViews().contains(viewName);
+        } else {return getSystemViews().contains(viewName);}
     }
 
     @Override
@@ -1326,7 +1326,12 @@ public abstract class AbstractJdbcDatabase implements Database {
         if (schema == null) {
             return getJdbcSchemaName(getDefaultSchema());
         } else {
-            return getJdbcSchemaName(new CatalogAndSchema(schema.getCatalogName(), schema.getName()));
+            String schemaName = getJdbcSchemaName(new CatalogAndSchema(schema.getCatalogName(), schema.getName()));
+            if (Objects.isNull(schemaName)) {
+                return getJdbcSchemaName(getDefaultSchema());
+            } else {
+                return schemaName;
+            }
         }
     }
 
