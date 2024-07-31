@@ -15,7 +15,7 @@
     </properties>
 
     <artifactId>liquibase-standard</artifactId>
-    <version>4.9.0</version>
+    <version>4.28.0</version>
     <packaging>jar</packaging>
 
     <dependencies>
