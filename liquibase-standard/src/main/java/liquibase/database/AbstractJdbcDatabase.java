@@ -366,10 +366,7 @@ public abstract class AbstractJdbcDatabase implements Database {
      * @see AbstractJdbcDatabase#getConnectionSchemaName()
      */
     protected SqlStatement getConnectionSchemaNameCallStatement() {
-        if (XuGuDatabase.PRODUCT_NAME.equalsIgnoreCase(getDatabaseProductName())){
-            return new RawCallStatement("select current_schema");
-        }
-        return new RawCallStatement("call current_schema");
+        return new RawCallStatement("select current_schema");
     }
 
     @Override

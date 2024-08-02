@@ -15,6 +15,7 @@ import liquibase.statement.core.RawSqlStatement;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.*;
 import liquibase.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -88,7 +89,8 @@ public class XuGuDatabase extends AbstractJdbcDatabase {
 
     @Override
     public boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
-        return PRODUCT_NAME.equalsIgnoreCase(conn.getDatabaseProductName());
+        String productName = conn.getDatabaseProductName().toLowerCase();
+        return productName.contains(PRODUCT_NAME.toLowerCase());
     }
 
     @Override
@@ -127,6 +129,7 @@ public class XuGuDatabase extends AbstractJdbcDatabase {
 
 
 
+    @Override
     public String getAutoIncrementClause(BigInteger startWith, BigInteger incrementBy, String generationType, Boolean defaultOnNull) {
         String clause = getAutoIncrementClause();
         boolean generateStartWith = generateAutoIncrementStartWith(startWith);
