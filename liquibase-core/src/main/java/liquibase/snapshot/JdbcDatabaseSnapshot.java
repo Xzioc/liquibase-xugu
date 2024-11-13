@@ -1025,6 +1025,8 @@ public class JdbcDatabaseSnapshot extends DatabaseSnapshot {
                         return queryDb2Zos(catalogAndSchema, table);
                     } else if (database instanceof PostgresDatabase) {
                         return queryPostgres(catalogAndSchema, table);
+                    }else if (database instanceof XuGuDatabase) {
+                        return queryXuGu(catalogAndSchema, table);
                     }
 
                     String catalog = ((AbstractJdbcDatabase) database).getJdbcCatalogName(catalogAndSchema);
@@ -1137,6 +1139,41 @@ public class JdbcDatabaseSnapshot extends DatabaseSnapshot {
                             SQL_FILTER_MATCH_ALL : escapeForLike(tableName)), new String[]{"TABLE", "PARTITIONED TABLE"}));
 
                 }
+                private List<CachedRow> queryXuGu(CatalogAndSchema catalogAndSchema, String tableName) throws  SQLException {
+                    StringBuilder sql = new StringBuilder();
+                    sql.append("SELECT \n")
+                            .append("  '").append(catalogAndSchema.getCatalogName().toUpperCase()).append("' AS TABLE_CAT, \n")
+                            .append("  s.schema_name AS TABLE_SCHEM, \n")
+                            .append("  t.table_name AS TABLE_NAME, \n")
+                            .append("  'TABLE' AS TABLE_TYPE, \n")
+                            .append("  t.comments AS REMARKS, \n")
+                            .append("  NULL AS TYPE_CAT, \n")
+                            .append("  'null' AS TYPE_SCHEM, \n")
+                            .append("  'null' AS TYPE_NAME, \n")
+                            .append("  'null' AS SELF_REFERENCING_COL_NAME, \n")
+                            .append("  'null' AS REF_GENERATION \n")
+                            .append("FROM \n")
+                            .append("  all_tables t, \n")
+                            .append("  all_schemas s \n")
+                            .append("WHERE \n")
+                            .append("  t.schema_id = s.schema_id \n")
+                            .append("  AND t.table_name = '").append(tableName.toUpperCase()).append("' \n")
+                            .append("  AND s.schema_name IN('").append(catalogAndSchema.getSchemaName().toUpperCase()).append("')" +
+                                    " " +
+                                    "\n")
+                            .append("  AND t.temp_type = 0 \n")
+                            .append("  AND t.IS_SYS = FALSE");
+                    JdbcConnection connection = (JdbcConnection) database.getConnection();
+                    try {
+                        Statement statement = connection.createStatement();
+                        return extract(statement.executeQuery(sql.toString()));
+                    } catch (DatabaseException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+
+
             });
         }
 

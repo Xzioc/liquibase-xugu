@@ -88,10 +88,11 @@ public class CatalogAndSchema {
                 workSchemaName = null;
             }
         } else {
-            if ((workCatalogName == null) && (workSchemaName != null)) { //had names in the wrong order
+            if ((workCatalogName == null) && (workSchemaName != null)) {
                 workCatalogName = workSchemaName;
+            } else if ((workCatalogName != null) && (workSchemaName == null)) {
+                workSchemaName = workCatalogName;
             }
-            workSchemaName = workCatalogName;
         }
 
         if (workCatalogName != null && equals(accordingTo, workCatalogName, accordingTo.getDefaultCatalogName())) {

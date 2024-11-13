@@ -8,6 +8,7 @@ import liquibase.database.Database;
 import liquibase.database.core.DB2Database;
 import liquibase.database.core.MSSQLDatabase;
 import liquibase.database.core.SQLiteDatabase;
+import liquibase.database.jvm.JdbcConnection;
 import liquibase.diff.output.DiffOutputControl;
 import liquibase.diff.output.changelog.ChangeGeneratorFactory;
 import liquibase.exception.DatabaseException;
@@ -27,6 +28,9 @@ import liquibase.structure.core.Column;
 import liquibase.structure.core.DataType;
 import liquibase.structure.core.Table;
 
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -117,6 +121,32 @@ public class StandardChangeLogHistoryService extends AbstractChangeLogHistorySer
         boolean changeLogCreateAttempted = false;
         Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database);
         if (changeLogTable != null) {
+            if (changeLogTable.getColumns().isEmpty()) {
+                try {
+                    JdbcConnection connection = (JdbcConnection) database.getConnection();
+                    String tableName = changeLogTable.getName();
+                    // 获取数据库元数据
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    // 查询表的所有字段信息
+                    ResultSet columns = metaData.getColumns(null, null, tableName, null);
+
+                    while (columns.next()) {
+                        String columnName = columns.getString("COLUMN_NAME");
+                        String columnType = columns.getString("TYPE_NAME");
+                        int columnSize = columns.getInt("COLUMN_SIZE");
+                        boolean isNullable = columns.getInt("NULLABLE") == DatabaseMetaData.columnNullable;
+                        Column column = new Column();
+                        column.setName(columnName);
+                        DataType dataType = new DataType(columnType);
+                        column.setType(dataType);
+                        column.setNullable(isNullable);
+                        changeLogTable.addColumn(column);
+                    }
+                    columns.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException("获取字段信息错误");
+                }
+            }
             boolean hasDescription = changeLogTable.getColumn("DESCRIPTION") != null;
             boolean hasComments = changeLogTable.getColumn("COMMENTS") != null;
             boolean hasTag = changeLogTable.getColumn("TAG") != null;

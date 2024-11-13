@@ -67,15 +67,7 @@ import java.math.BigInteger;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static liquibase.util.StringUtil.join;
@@ -376,7 +368,7 @@ public abstract class AbstractJdbcDatabase implements Database {
      * @see AbstractJdbcDatabase#getConnectionSchemaName()
      */
     protected SqlStatement getConnectionSchemaNameCallStatement(){
-        return new RawCallStatement("call current_schema");
+        return new RawCallStatement("select current_schema");
     }
 
     @Override
@@ -1408,7 +1400,12 @@ public abstract class AbstractJdbcDatabase implements Database {
         if (schema == null) {
             return getJdbcSchemaName(getDefaultSchema());
         } else {
-            return getJdbcSchemaName(new CatalogAndSchema(schema.getCatalogName(), schema.getName()));
+            String schemaName = getJdbcSchemaName(new CatalogAndSchema(schema.getCatalogName(), schema.getName()));
+            if (Objects.isNull(schemaName)) {
+                return getJdbcSchemaName(getDefaultSchema());
+            } else {
+                return schemaName;
+            }
         }
     }
 
