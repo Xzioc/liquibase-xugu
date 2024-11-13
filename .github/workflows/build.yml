@@ -314,7 +314,7 @@ jobs:
           GPG_PASSWORD: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Download liquibase-pro
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           github_token: ${{ secrets.BOT_TOKEN }}
           workflow: build.yml
